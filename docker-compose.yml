@@ -1,0 +1,44 @@
+version: '3'
+services:
+  web:
+    build: nginx
+    container_name: nginx-container
+    ports:
+      - "8080:80"
+    depends_on:
+      - php
+    networks:
+      - doceletronico
+
+  php:
+    image: php:7.4-fpm
+    container_name: php-container
+    volumes:
+      - ./:/var/www/html/
+    depends_on:
+      - mysql
+    environment:
+      - RDS_HOSTNAME=172.19.0.2
+      - RDS_USERNAME=root
+      - RDS_PASSWORD=password
+      - RDS_DB_NAME=edbd
+    networks:
+      - doceletronico
+
+  mysql:
+    image: mysql:8
+    container_name: mysql-container
+    environment:
+      - MYSQL_DATABASE=teste
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=teste
+      - MYSQL_ROOT_PASSWORD=password
+    ports:
+      - "3306:3306"
+    networks:
+      - doceletronico
+    volumes: 
+      - ./dump/:/teste/
+
+networks:
+  doceletronico:
